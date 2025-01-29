@@ -13,6 +13,9 @@ docker pull docker.io/r-base
 ```
 
 
+A tutorial on containerization is in the making: <https://github.com/inbo/tutorials/tree/dev_docker>.
+
+
 You can consolidate these dockerfiles on demand to derive your own container builds.
 The list is incomplete, but you might find similar packages. 
 I am accumulating additional examples as I move on.
@@ -42,14 +45,15 @@ docker run -it --entrypoint /bin/bash <image>
 
 # List of INBO Packages
 
-- [ ] inbodb
+- [ ] checklist
+- [X] inbodb 
 - [ ] inborutils
 - [ ] inbospatial
 - [ ] n2kanalysis
 - [ ] n2khab
-- [ ] watina
-- [✓] INBOmd
-> ERROR: dependencies ‘checklist’, ‘pdftools’ are not available for package ‘INBOmd’
+- [ ] watina << inbodb
+- [ ] INBOtheme
+- [ ] INBOmd << checklist
 
 # Testing
 
@@ -59,7 +63,7 @@ docker run -it --entrypoint /bin/bash <image>
 
 ``` sh
 docker run -it --entrypoint /bin/bash <image>
-R --vanilla --silent -q -e 'library("image")'
+R --vanilla --silent -q -e 'library("<image>")'
 ```
 
 
@@ -67,6 +71,8 @@ Remove all images:
 
 ``` sh
 docker rmi $(docker images -q)
+# or
+podman rmi $(podman images -q) -f
 ```
 
-.
+
