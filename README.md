@@ -47,8 +47,8 @@ docker run -it --entrypoint /bin/bash <image>
 
 - [ ] checklist
 - [X] inbodb 
-- [ ] inborutils
-- [ ] inbospatial
+- [X] inborutils
+- [X] inbospatial
 - [ ] n2kanalysis
 - [ ] n2khab
 - [ ] watina << inbodb
@@ -80,4 +80,5 @@ podman rmi $(podman images -q) -f
 - httr <- libcurl4-openssl-dev libssl-dev
 - xml2 <- libxml2
 - units <- libudunits2-dev
+- rgbif <- libssl-dev libudunits2-dev libxml2 ++libprotobuf-dev 
 - sf <- a whole lot of stuff, incl. units
