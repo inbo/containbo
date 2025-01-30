@@ -75,4 +75,9 @@ docker rmi $(docker images -q)
 podman rmi $(podman images -q) -f
 ```
 
+# Notes
 
+- httr <- libcurl4-openssl-dev libssl-dev
+- xml2 <- libxml2
+- units <- libudunits2-dev
+- sf <- a whole lot of stuff, incl. units
