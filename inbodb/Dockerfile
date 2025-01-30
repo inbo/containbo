@@ -4,7 +4,7 @@ FROM docker.io/r-base
 # system packages; for `odbc`, `units`, `s2`, `xml2`, ...
 RUN apt-get update \
   && apt-get install libssl-dev libcurl4-openssl-dev unixodbc-dev --yes \
-  && apt-get install libudunits2-dev libabsl-dev libxml2 --yes
+  && apt-get install libudunits2-dev libabsl-dev libxml2 --yes \
   && apt-get install git libgit2-dev --yes
 
 # for `sf`; ref: https://github.com/rocker-org/geospatial/blob/master/Dockerfile
@@ -30,8 +30,6 @@ RUN apt-get update \
     protobuf-compiler \
     sqlite3 \
     tk-dev
-
-# liblwgeom-dev \
 
 # install from github
 RUN R -q -e 'install.packages("remotes", dependencies = TRUE)'

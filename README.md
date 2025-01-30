@@ -55,6 +55,9 @@ docker run -it --entrypoint /bin/bash <image>
 - [ ] INBOtheme
 - [ ] INBOmd << checklist
 
+- [ ] all in one
+
+
 # Testing
 
 - create a dockerfile
