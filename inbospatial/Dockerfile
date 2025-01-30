@@ -3,9 +3,11 @@ FROM docker.io/r-base
 
 # system packages; for `odbc`, `units`, `s2`, `xml2`, ...
 RUN apt-get update \
-  && apt-get install libssl-dev libcurl4-openssl-dev unixodbc-dev --yes \
-  && apt-get install libudunits2-dev libabsl-dev libxml2 --yes
-  && apt-get install git libgit2-dev --yes
+  && apt-get install libssl-dev --yes \
+  && apt-get install libcurl4-openssl-dev --yes \
+  && apt-get install libudunits2-dev --yes \
+  && apt-get install git libgit2-dev --yes \
+  && apt-get install libxml2 --yes
 
 # for `sf`; ref: https://github.com/rocker-org/geospatial/blob/master/Dockerfile
 RUN apt-get update \
@@ -31,9 +33,8 @@ RUN apt-get update \
     sqlite3 \
     tk-dev
 
-# liblwgeom-dev \
 
 # install from github
 RUN R -q -e 'install.packages("remotes", dependencies = TRUE)'
-RUN R -q -e 'remotes::install_github("inbo/inbodb", dependencies = TRUE)'
+RUN R -q -e 'remotes::install_github("inbo/inbospatial", dependencies = TRUE)'
 
