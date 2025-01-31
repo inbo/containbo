@@ -45,13 +45,13 @@ docker run -it --entrypoint /bin/bash <image>
 
 # List of INBO Packages
 
-- [ ] checklist
+- [X] checklist
 - [X] inbodb 
 - [X] inborutils
 - [X] inbospatial
 - [ ] n2kanalysis
 - [X] n2khab
-- [ ] watina << inbodb
+- [X] watina << inbodb
 - [ ] INBOtheme
 - [ ] INBOmd << checklist
 
@@ -85,3 +85,11 @@ podman rmi $(podman images -q) -f
 - units <- libudunits2-dev
 - rgbif <- libssl-dev libudunits2-dev libxml2 ++libprotobuf-dev 
 - sf <- a whole lot of stuff, incl. units
+- usethis <- openssl, curl, credentials, httr2, gert, gh
+- pkgdown <- libharfbuzz-dev libfribidi-dev, lib8-dev
+- devtools <- ‘usethis’, ‘pkgdown’, ‘rcmdcheck’, ‘roxygen2’, ‘rversions’, ‘urlchecker’
+- magick <- libmagick++-dev
+- gt <- juicyjuice <- lib8-dev
+- ragg <- libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+- checklist <- [usethis, pkgdown, devtools] + librdf0-dev libsodium-dev
+
