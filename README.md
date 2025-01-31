@@ -92,11 +92,13 @@ cd quarto-cli
 - [X] inbodb 
 - [X] inborutils
 - [X] inbospatial
-- [ ] n2kanalysis << multimput n2khelper
 - [X] n2khab
 - [X] watina << inbodb
-- [ ] INBOtheme
 - [X] INBOmd << checklist
+- [X] INBOtheme
+- [ ] INLA <- fmesher
+- [ ] n2kanalysis << n2khelper multimput < INLA < fmesher
+
 
 - [ ] all in one
   + tidyverse
@@ -139,12 +141,11 @@ podman rmi $(podman images -q) -f
 - gt <- juicyjuice <- lib8-dev
 - ragg <- libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 - checklist <- [usethis, pkgdown, devtools] + librdf0-dev libsodium-dev
-- INBOmd <- [checklist] + libpoppler-cpp-dev
+- INBOtheme <- libssl-dev libcurl4-openssl-dev git libgit2-dev
+- INBOmd <- [checklist, INBOtheme] + libpoppler-cpp-dev
 
 n2kanalysis <- ‘multimput’, ‘n2khelper’, ‘RODBC’ libcurl4-openssl-dev libgit2 libssl-dev libudunits2-dev cmake
 libxml2-dev
 sql.h and sqlext.h via unixodbc-dev?
 
-INBOtheme
-openssl
-libgit2
+
