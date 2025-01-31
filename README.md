@@ -144,8 +144,8 @@ podman rmi $(podman images -q) -f
 - INBOtheme <- libssl-dev libcurl4-openssl-dev git libgit2-dev
 - INBOmd <- [checklist, INBOtheme] + libpoppler-cpp-dev
 
-n2kanalysis <- ‘multimput’, ‘n2khelper’, ‘RODBC’ libcurl4-openssl-dev libgit2 libssl-dev libudunits2-dev cmake
-libxml2-dev
+n2kanalysis <- ‘multimput’, ‘n2khelper’, ‘RODBC’ libcurl4-openssl-dev libgit2 libssl-dev libudunits2-dev cmake libxml2-dev
 sql.h and sqlext.h via unixodbc-dev?
+INLA 
 
 
