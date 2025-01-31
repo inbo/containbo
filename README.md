@@ -24,6 +24,8 @@ Feel free to contribute.
 
 # Tips and Tricks
 
+## all updates 
+
 You might want to update system packages upon building:
 
 ```{dsl}
@@ -36,10 +38,51 @@ RUN apt update \
 ```
 
 
+## terminal access
+
 You can access the container terminal as follows:
 
 ```{sh}
 docker run -it --entrypoint /bin/bash <image>
+```
+
+
+## private repos
+
+If you require private repo's within the container, copy them in as follows:
+
+```{dsl}
+# copy the repo
+COPY my_private_repo /opt/my_private_repo
+
+# manually install dependencies
+RUN R -q -e 'install.packages("remotes", dependencies = TRUE)' # just an example
+
+# finally, install package from folder
+RUN R -q -e 'install.packages("/opt/my_private_repo", repos = NULL, type = "source", dependencies = TRUE)'
+```
+
+
+## quarto
+
+To install quarto, either download the `.deb` [listed here](https://quarto.org/docs/get-started) via an entrypoint, and install it:
+
+```{dsl}
+ADD https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/quarto-1.6.40-linux-amd64.deb /tmp/quarto.deb
+RUN dpkg -i /tmp/quarto.deb && rm /tmp/quarto.deb
+```
+
+
+Or follow [the posit instructions](https://docs.posit.co/resources/install-quarto.html) to get the latest version.
+
+
+Or use `git` and follow instructions [here](https://github.com/quarto-dev/quarto-cli).
+(Requires `xz-utils`.)
+
+```{sh}
+git clone https://github.com/quarto-dev/quarto-cli
+cd quarto-cli
+./configure.sh
 ```
 
 
@@ -49,13 +92,17 @@ docker run -it --entrypoint /bin/bash <image>
 - [X] inbodb 
 - [X] inborutils
 - [X] inbospatial
-- [ ] n2kanalysis
+- [ ] n2kanalysis << multimput n2khelper
 - [X] n2khab
 - [X] watina << inbodb
 - [ ] INBOtheme
-- [ ] INBOmd << checklist
+- [X] INBOmd << checklist
 
 - [ ] all in one
+  + tidyverse
+  + bookdown?
+
+(publish to docker hub?)
 
 
 # Testing
@@ -92,4 +139,12 @@ podman rmi $(podman images -q) -f
 - gt <- juicyjuice <- lib8-dev
 - ragg <- libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 - checklist <- [usethis, pkgdown, devtools] + librdf0-dev libsodium-dev
+- INBOmd <- [checklist] + libpoppler-cpp-dev
 
+n2kanalysis <- ‘multimput’, ‘n2khelper’, ‘RODBC’ libcurl4-openssl-dev libgit2 libssl-dev libudunits2-dev cmake
+libxml2-dev
+sql.h and sqlext.h via unixodbc-dev?
+
+INBOtheme
+openssl
+libgit2
