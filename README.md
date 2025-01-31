@@ -50,7 +50,7 @@ docker run -it --entrypoint /bin/bash <image>
 - [X] inborutils
 - [X] inbospatial
 - [ ] n2kanalysis
-- [ ] n2khab
+- [X] n2khab
 - [ ] watina << inbodb
 - [ ] INBOtheme
 - [ ] INBOmd << checklist
