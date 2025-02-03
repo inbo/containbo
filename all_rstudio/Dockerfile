@@ -69,6 +69,40 @@ RUN R -q -e 'install.packages("usethis", dependencies = TRUE)'
 RUN R -q -e 'install.packages("pkgdown", dependencies = TRUE)'
 RUN R -q -e 'install.packages("roxygen2", dependencies = TRUE)'
 RUN R -q -e 'install.packages("rprojroot", dependencies = TRUE)'
+RUN R -q -e 'install.packages("fmesher", repos = c("https://inlabru-org.r-universe.dev", "https://cloud.r-project.org"))'
+RUN R -q -e 'install.packages("BiocManager")'
+RUN R -q -e 'BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)'
+RUN R -q -e 'install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)'
+
+# geospatial
+# fmesher, lwgeom, sf, terra, stars
+# INLA
+# renv + renv.lock
+# https://github.com/r-spatial/qgisprocess/blob/49ffca7362597582ae1d2e890c3cc46342d7874a/.github/workflows/R-CMD-check.yaml#L55
+# https://github.com/r-spatial/qgisprocess/blob/49ffca7362597582ae1d2e890c3cc46342d7874a/.github/workflows/R-CMD-check.yaml#L79-L80
+
+# extra repo https://geocompr.r-universe.dev
+#   mkdir ../extra_plugins
+#   echo "QGIS_PLUGINPATH=$(pwd)/../extra_plugins" >> $GITHUB_ENV
+#   echo "::endgroup::"
+#   echo "::group::Install the QGIS Signing Key"
+#   sudo wget -qO /etc/apt/keyrings/qgis-archive-keyring.gpg https://download.qgis.org/downloads/qgis-archive-keyring.gpg
+#   echo "::endgroup::"
+
+# Add repo to install QGIS development version for Ubuntu (using an often outdated GRASS release from Ubuntu repo)
+#   sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu-nightly `lsb_release -c -s` main" > /etc/apt/sources.list.d/qgis.list'
+
+# Add repos to install upcoming QGIS point release (becoming latest release in < 1 month) for Ubuntugis (ubuntugis-unstable PPA, with current GRASS release)
+#   sudo mkdir -p /root/.gnupg
+#   sudo chmod 700 /root/.gnupg
+#   sudo gpg --no-default-keyring --keyring /etc/apt/keyrings/ubuntugis-unstable-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6B827C12C2D425E227EDCA75089EBE08314DF160
+#   sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/ubuntugis-unstable-archive-keyring.gpg] http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu `lsb_release -c -s` main" > /etc/apt/sources.list.d/ubuntugis-unstable.list'
+#   sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntugis-nightly-release `lsb_release -c -s` main" > /etc/apt/sources.list.d/qgis.list'
+
+# https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable
+# sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+# sudo add-apt-repository 'deb [arch=amd64] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse'
+
 
 # R packages, from github
 RUN R -q -e 'remotes::install_github("inbo/INBOmd", dependencies = TRUE)'
