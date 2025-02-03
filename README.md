@@ -102,7 +102,7 @@ cd quarto-cli
 
 - [ ] all in one
   + tidyverse
-  + bookdown?
+  + bookdown
 
 (publish to docker hub?)
 
@@ -146,6 +146,6 @@ podman rmi $(podman images -q) -f
 
 n2kanalysis <- ‘multimput’, ‘n2khelper’, ‘RODBC’ libcurl4-openssl-dev libgit2 libssl-dev libudunits2-dev cmake libxml2-dev
 sql.h and sqlext.h via unixodbc-dev?
-INLA 
+INLA <- fmesher
 
 

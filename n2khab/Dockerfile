@@ -9,7 +9,7 @@ RUN apt-get update \
     libfontconfig1-dev \
     libudunits2-dev \
     libabsl-dev \
-    libxml2 \
+    libxml2-dev \
     unixodbc-dev \
     git \
     libgit2-dev \
