@@ -97,7 +97,7 @@ cd quarto-cli
 - [X] INBOmd << checklist
 - [X] INBOtheme
 - [X] INLA <- fmesher
-- [ ] n2kanalysis << n2khelper multimput < INLA < fmesher
+- [X] n2kanalysis << n2khelper multimput < INLA < fmesher
 
 
 - [ ] all in one
@@ -144,11 +144,9 @@ podman rmi $(podman images -q) -f
 - INBOtheme <- libssl-dev libcurl4-openssl-dev git libgit2-dev
 - INBOmd <- [checklist, INBOtheme] + libpoppler-cpp-dev
 - INLA <- [fmesher devtools] + jags
+- n2kanalysis <- [multimput n2khelper RODBC INLA] libcurl4-openssl-dev libgit2 libssl-dev libudunits2-dev cmake libxml2-dev unixodbc-dev
 
-n2kanalysis <- ‘multimput’, ‘n2khelper’, ‘RODBC’ libcurl4-openssl-dev libgit2 libssl-dev libudunits2-dev cmake libxml2-dev
-sql.h and sqlext.h via unixodbc-dev?
-
-
+INLA temporary issue?
 ``` 
 # RUN R -q -e 'install.packages("HKprocess", repos = c("https://inlabru-org.r-universe.dev", "https://cloud.r-project.org"))'
 # 'HKprocess’ https://cran.r-project.org/web/packages/HKprocess/index.html archived!

@@ -36,22 +36,3 @@ RUN R -q -e 'install.packages("fmesher", repos = c("https://inlabru-org.r-univer
 RUN R -q -e 'install.packages("BiocManager")'
 RUN R -q -e 'BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)'
 RUN R -q -e 'install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)'
-
-# RUN R -q -e 'install.packages("HKprocess", repos = c("https://inlabru-org.r-universe.dev", "https://cloud.r-project.org"))'
-# 'HKprocess’ https://cran.r-project.org/web/packages/HKprocess/index.html archived!
-
-# Warning messages:
-#   installation of package ‘runjags’ had non-zero exit status
-# checking for pkg-config... /usr/bin/pkg-config
-# configure: WARNING: pkg-config file for jags unavailable
-# configure: WARNING: Consider adding the directory containing `jags.pc`
-# configure: WARNING: to the PKG_CONFIG_PATH environment variable
-# configure: Attempting legacy configuration of rjags
-# checking for jags... no
-# configure: error: "automatic detection of JAGS failed. Please use pkg-config to locate the JAGS library. See the INSTALL file for details."
-# ERROR: configuration failed for package ‘runjags’
-
-#   installation of package ‘ragg’ had non-zero exit status
-#   installation of package ‘pkgdown’ had non-zero exit status
-#   installation of package ‘devtools’ had non-zero exit status
-# >
