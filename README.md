@@ -129,6 +129,9 @@ podman rmi $(podman images -q) -f
 
 # Notes
 
+Github has rate limits. If you encounter a `403` upon github installation, wait and repeat.
+
+
 - httr <- libcurl4-openssl-dev libssl-dev
 - xml2 <- libxml2
 - units <- libudunits2-dev
