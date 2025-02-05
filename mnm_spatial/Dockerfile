@@ -8,6 +8,7 @@ RUN apt-get update \
   && apt-get full-upgrade -y --no-install-recommends
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
+    apt-show-versions \
     git \
     lbzip2 \
     libabsl-dev \
@@ -57,26 +58,43 @@ RUN dpkg -i /tmp/quarto.deb && rm /tmp/quarto.deb
 RUN R -q -e 'update.packages(ask=FALSE)'
 
 # R packages, CRAN
-RUN R -q -e 'install.packages("arrow", dependencies = TRUE)' \
- && R -q -e 'install.packages("bookdown", dependencies = TRUE)' \
+RUN echo "installing R packages from CRAN." \
+ && R -q -e 'install.packages("arrow", dependencies = TRUE)' \
  && R -q -e 'install.packages("BiocManager", dependencies = TRUE)' \
+ && R -q -e 'install.packages("bookdown", dependencies = TRUE)' \
  && R -q -e 'install.packages("brms", dependencies = TRUE)' \
+ && R -q -e 'install.packages("conquer", dependencies = TRUE)' \
  && R -q -e 'install.packages("devtools", dependencies = TRUE)' \
+ && R -q -e 'install.packages("GGally", dependencies = TRUE)' \
  && R -q -e 'install.packages("git2rdata", dependencies = TRUE)' \
+ && R -q -e 'install.packages("janitor", dependencies = TRUE)' \
+ && R -q -e 'install.packages("link2GI", dependencies = TRUE)' \
+ && R -q -e 'install.packages("mitools", dependencies = TRUE)' \
+ && R -q -e 'install.packages("pROC", dependencies = TRUE)' \
+ && R -q -e 'install.packages("patchwork", dependencies = TRUE)' \
+ && R -q -e 'install.packages("permute", dependencies = TRUE)' \
  && R -q -e 'install.packages("pkgdown", dependencies = TRUE)' \
  && R -q -e 'install.packages("remotes", dependencies = TRUE)' \
  && R -q -e 'install.packages("renv", dependencies = TRUE)' \
+ && R -q -e 'install.packages("reshape", dependencies = TRUE)' \
  && R -q -e 'install.packages("reticulate", dependencies = TRUE)' \
+ && R -q -e 'install.packages("rgrass", dependencies = TRUE)' \
  && R -q -e 'install.packages("roxygen2", dependencies = TRUE)' \
  && R -q -e 'install.packages("rprojroot", dependencies = TRUE)' \
  && R -q -e 'install.packages("rstan", dependencies = TRUE)' \
- && R -q -e 'install.packages(c("sf", "lwgeom"), dependencies = TRUE)' \
+ && R -q -e 'install.packages("snakecase", dependencies = TRUE)' \
  && R -q -e 'install.packages("stars", dependencies = TRUE)' \
+ && R -q -e 'install.packages("survey", dependencies = TRUE)' \
  && R -q -e 'install.packages("terra", dependencies = TRUE)' \
  && R -q -e 'install.packages("tidyverse", dependencies = TRUE)' \
+ && R -q -e 'install.packages("tmvnsim", dependencies = TRUE)' \
  && R -q -e 'install.packages("usethis", dependencies = TRUE)' \
+ && R -q -e 'install.packages("vegan", dependencies = TRUE)' \
+ && R -q -e 'install.packages(c("sf", "lwgeom"), dependencies = TRUE)' \
  && echo "done."
 
+# from other sources
+RUN R -q -e 'remotes::install_github("paleolimbot/rbbt")'
 RUN R -q -e 'install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))'
 RUN R -q -e 'install.packages("fmesher", repos = c("https://inlabru-org.r-universe.dev", "https://cloud.r-project.org"))'
 RUN R -q -e 'BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)'
@@ -84,13 +102,16 @@ RUN R -q -e 'install.packages("INLA", repos=c(getOption("repos"), INLA="https://
 
 
 # R INBO packages, from github
-RUN R -q -e 'remotes::install_github("inbo/INBOmd", dependencies = TRUE)' \
+RUN echo "installing INBO packages from github." \
+ && R -q -e 'remotes::install_github("inbo/INBOmd", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/inbodb", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/inbospatial", dependencies = TRUE)' \
+ && R -q -e 'remotes::install_github("inbo/inlatools", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/n2kanalysis", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/n2khab", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/n2khabmon", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/watina", dependencies = TRUE)'
+ && R -q -e 'remotes::install_github("inbo/watina", dependencies = TRUE)' \
+ && echo "done."
 
 # geospatial
 # renv + renv.lock

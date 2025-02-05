@@ -97,6 +97,7 @@ cd quarto-cli
 - [X] INBOmd << checklist
 - [X] INBOtheme
 - [X] INLA <- fmesher
+- [ ] inlatools
 - [X] n2kanalysis << n2khelper multimput < INLA < fmesher
 
 
