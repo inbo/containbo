@@ -1,7 +1,7 @@
-LABEL version="1.0" maintainer="Falk Mielke <falk.mielke@inbo.be>"
-
-# build upon the r-base image
 FROM docker.io/rocker/rstudio
+# (building upon the rocker/rstudio image)
+
+LABEL version="1.0" maintainer="Falk Mielke <falk.mielke@inbo.be>"
 
 # system packages
 RUN apt-get update \
@@ -50,9 +50,6 @@ RUN apt-get update \
     tk-dev \
     unixodbc-dev
 
-# quarto
-ADD https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/quarto-1.6.40-linux-amd64.deb /tmp/quarto.deb
-RUN dpkg -i /tmp/quarto.deb && rm /tmp/quarto.deb
 
 # R updates
 RUN R -q -e 'update.packages(ask=FALSE)'
@@ -68,6 +65,7 @@ RUN echo "installing R packages from CRAN." \
  && R -q -e 'install.packages("GGally", dependencies = TRUE)' \
  && R -q -e 'install.packages("git2rdata", dependencies = TRUE)' \
  && R -q -e 'install.packages("janitor", dependencies = TRUE)' \
+ && R -q -e 'install.packages("knitr", dependencies = TRUE)' \
  && R -q -e 'install.packages("link2GI", dependencies = TRUE)' \
  && R -q -e 'install.packages("mitools", dependencies = TRUE)' \
  && R -q -e 'install.packages("pROC", dependencies = TRUE)' \
@@ -79,6 +77,7 @@ RUN echo "installing R packages from CRAN." \
  && R -q -e 'install.packages("reshape", dependencies = TRUE)' \
  && R -q -e 'install.packages("reticulate", dependencies = TRUE)' \
  && R -q -e 'install.packages("rgrass", dependencies = TRUE)' \
+ && R -q -e 'install.packages("rmarkdown", dependencies = TRUE)' \
  && R -q -e 'install.packages("roxygen2", dependencies = TRUE)' \
  && R -q -e 'install.packages("rprojroot", dependencies = TRUE)' \
  && R -q -e 'install.packages("rstan", dependencies = TRUE)' \
@@ -92,6 +91,16 @@ RUN echo "installing R packages from CRAN." \
  && R -q -e 'install.packages("vegan", dependencies = TRUE)' \
  && R -q -e 'install.packages(c("sf", "lwgeom"), dependencies = TRUE)' \
  && echo "done."
+
+
+# quarto - latest version
+# check quarto releases to update: https://github.com/quarto-dev/quarto-cli/releases
+ADD https://github.com/quarto-dev/quarto-cli/releases/download/v1.7.13/quarto-1.7.13-linux-amd64.deb /tmp/quarto.deb
+RUN dpkg -i /tmp/quarto.deb && rm /tmp/quarto.deb
+# run `quarto check` for a checkup
+RUN quarto install tinytex --update-path
+RUN python3 -m pip install jupyter
+
 
 # from other sources
 RUN R -q -e 'remotes::install_github("paleolimbot/rbbt")'
