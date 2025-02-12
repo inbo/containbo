@@ -20,7 +20,10 @@ RUN echo "System repositories and packages" \
 # more system packages
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
+	libodbc2 \
     apt-show-versions \
+    cmake \
+    jags \
     lbzip2 \
     libabsl-dev \
     libcurl4-openssl-dev \
@@ -130,6 +133,7 @@ RUN echo "installing INBO packages from github." \
  && R -q -e 'remotes::install_github("inbo/inbodb", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/inbospatial", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/inlatools", dependencies = TRUE)' \
+ && R -q -e 'remotes::install_github("inbo/multimput", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/n2kanalysis", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/n2khab", dependencies = TRUE)' \
  && R -q -e 'remotes::install_github("inbo/n2khabmon", dependencies = TRUE)' \

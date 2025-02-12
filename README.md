@@ -161,6 +161,7 @@ RUN R -e 'install.packages(c("sf", "lwgeom", "rgdal", "sp", "stars"))'
 - [X] inbodb 
 - [X] inborutils
 - [X] inbospatial
+- [ ] multimput
 - [X] n2khab
 - [X] watina << inbodb
 - [X] INBOmd << checklist
@@ -217,6 +218,7 @@ Github has rate limits. If you encounter a `403` upon github installation, wait 
 - INBOmd <- [checklist, INBOtheme] + libpoppler-cpp-dev
 - INLA <- [fmesher devtools] + jags
 - n2kanalysis <- [multimput n2khelper RODBC INLA] libcurl4-openssl-dev libgit2 libssl-dev libudunits2-dev cmake libxml2-dev unixodbc-dev
+- multimput <- INLA
 
 INLA temporary issue?
 ``` 
