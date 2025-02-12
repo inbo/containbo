@@ -3,13 +3,24 @@ FROM docker.io/rocker/rstudio
 
 LABEL version="1.0" maintainer="Falk Mielke <falk.mielke@inbo.be>"
 
-# system packages
-RUN apt-get update \
-  && apt-get full-upgrade -y --no-install-recommends
+# update system packages
+# and add ubuntugis repository
+# for latest versions of programs in the spatial stack
+RUN echo "System repositories and packages" \
+  && apt-get update \
+  && apt-get full-upgrade -y --no-install-recommends \
+  && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    git \
+    software-properties-common \
+    vim \
+    wget \
+  && add-apt-repository --enable-source --yes "ppa:ubuntugis/ubuntugis-unstable"
+
+# more system packages
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     apt-show-versions \
-    git \
     lbzip2 \
     libabsl-dev \
     libcurl4-openssl-dev \
@@ -46,16 +57,19 @@ RUN apt-get update \
     netcdf-bin \
     postgis \
     protobuf-compiler \
+    python3 \
+    python3-pip \
     sqlite3 \
     tk-dev \
     unixodbc-dev
+# liblwgeom-dev \
 
 
 # R updates
 RUN R -q -e 'update.packages(ask=FALSE)'
 
 # R packages, CRAN
-RUN echo "installing R packages from CRAN." \
+RUN echo "installing R packages from the posit public package manager (https://p3m.dev)..." \
  && R -q -e 'install.packages("arrow", dependencies = TRUE)' \
  && R -q -e 'install.packages("BiocManager", dependencies = TRUE)' \
  && R -q -e 'install.packages("bookdown", dependencies = TRUE)' \
@@ -69,6 +83,7 @@ RUN echo "installing R packages from CRAN." \
  && R -q -e 'install.packages("link2GI", dependencies = TRUE)' \
  && R -q -e 'install.packages("mitools", dependencies = TRUE)' \
  && R -q -e 'install.packages("pROC", dependencies = TRUE)' \
+ && R -q -e 'install.packages("pak", dependencies = TRUE)' \
  && R -q -e 'install.packages("patchwork", dependencies = TRUE)' \
  && R -q -e 'install.packages("permute", dependencies = TRUE)' \
  && R -q -e 'install.packages("pkgdown", dependencies = TRUE)' \
@@ -82,14 +97,13 @@ RUN echo "installing R packages from CRAN." \
  && R -q -e 'install.packages("rprojroot", dependencies = TRUE)' \
  && R -q -e 'install.packages("rstan", dependencies = TRUE)' \
  && R -q -e 'install.packages("snakecase", dependencies = TRUE)' \
- && R -q -e 'install.packages("stars", dependencies = TRUE)' \
  && R -q -e 'install.packages("survey", dependencies = TRUE)' \
  && R -q -e 'install.packages("terra", dependencies = TRUE)' \
  && R -q -e 'install.packages("tidyverse", dependencies = TRUE)' \
  && R -q -e 'install.packages("tmvnsim", dependencies = TRUE)' \
  && R -q -e 'install.packages("usethis", dependencies = TRUE)' \
  && R -q -e 'install.packages("vegan", dependencies = TRUE)' \
- && R -q -e 'install.packages(c("sf", "lwgeom"), dependencies = TRUE)' \
+ && R -q -e 'install.packages(c("sf", "lwgeom", "rgdal", "sp", "stars"), dependencies = TRUE)' \
  && echo "done."
 
 
@@ -99,7 +113,7 @@ ADD https://github.com/quarto-dev/quarto-cli/releases/download/v1.7.13/quarto-1.
 RUN dpkg -i /tmp/quarto.deb && rm /tmp/quarto.deb
 # run `quarto check` for a checkup
 RUN quarto install tinytex --update-path
-RUN python3 -m pip install jupyter
+RUN pip3 install jupyter --break-system-packages
 
 
 # from other sources
@@ -149,6 +163,3 @@ RUN echo "installing INBO packages from github." \
 # https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable
 # sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 # sudo add-apt-repository 'deb [arch=amd64] https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable'
-
-# renv
-# https://github.com/rstudio/renv/issues/446

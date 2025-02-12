@@ -4,7 +4,7 @@ This repository is a collection of Dockerfiles to support you to bring your favo
 
 
 The [dockerfiles](https://docs.docker.com/build/concepts/dockerfile) are organized in subfolders; each contains the minimum prerequisites for creating a container based on [Rocker images](https://rocker-project.org).
-The underlying OS is [Debian Testing](https://wiki.debian.org/DebianTesting).
+The underlying OS is [Ubuntu](https://hub.docker.com/_/ubuntu) which in turn builds on [Debian Testing](https://wiki.debian.org/DebianTesting).
 Scripts are tested with `r-base`, but should be portable to `rocker/rstudio`.
 
 
@@ -43,7 +43,32 @@ RUN apt update \
 You can access the container terminal as follows:
 
 ```{sh}
-docker run -it --entrypoint /bin/bash <image>
+docker run -it <image> bash
+```
+
+
+## `pak` and `r2u`
+
+Using R package managers might simplify Dockerfiles and save you time.
+
+
+Here is how you can introduce `pak` to your build:
+
+- <https://pak.r-lib.org>
+
+```{}
+RUN R -q -e 'install.packages("pak", dependencies = TRUE)'
+RUN R -q -e 'pak::pkg_install("<package>")' 
+```
+
+
+For `r2u`, there is a rocker image which you can use as a base for your custom containers.
+
+- <https://github.com/rocker-org/r2u>
+
+
+```{sh}
+docker run -it docker.io/rocker/r2u
 ```
 
 
@@ -65,24 +90,68 @@ RUN R -q -e 'install.packages("/opt/my_private_repo", repos = NULL, type = "sour
 
 ## quarto
 
-To install quarto, either download the `.deb` [listed here](https://quarto.org/docs/get-started) via an entrypoint, and install it:
+Quarto is available on some pre-packed rocker images (e.g. `rocker/rstudio`).
+However, you might prefer the latest version, or adjust system integration.
+Option 1: To install quarto from a debian package, either download the `.deb` [listed here](https://quarto.org/docs/get-started) via an entrypoint, and install it:
 
 ```{dsl}
-ADD https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/quarto-1.6.40-linux-amd64.deb /tmp/quarto.deb
+ADD https://github.com/quarto-dev/quarto-cli/releases/download/v1.7.13/quarto-1.7.13-linux-amd64.deb /tmp/quarto.deb
 RUN dpkg -i /tmp/quarto.deb && rm /tmp/quarto.deb
 ```
 
+Check quarto releases regularly to get the latest version: https://github.com/quarto-dev/quarto-cli/releases
 
-Or follow [the posit instructions](https://docs.posit.co/resources/install-quarto.html) to get the latest version.
+
+Option 2: follow [the posit instructions](https://docs.posit.co/resources/install-quarto.html) to get the latest version of quarto.
 
 
-Or use `git` and follow instructions [here](https://github.com/quarto-dev/quarto-cli).
+Option 3: Or use `git` and follow instructions [here](https://github.com/quarto-dev/quarto-cli).
 (Requires `xz-utils`.)
 
 ```{sh}
 git clone https://github.com/quarto-dev/quarto-cli
 cd quarto-cli
 ./configure.sh
+```
+
+
+Additional modules will certainly be useful:
+
+```{sh}
+RUN quarto install tinytex --update-path
+RUN python3 -m pip install jupyter
+```
+
+You can log into the bash and run `quarto check` for a checkup and further extensions.
+
+
+## renv
+
+- <https://github.com/rstudio/renv/issues/446>
+
+When attampting `docker-compose`, see note here: <https://github.com/rstudio/renv/issues/599>
+
+
+## geocomputation
+
+https://github.com/geocompx/docker
+https://github.com/geocompx/docker/blob/master/dockerfiles/Dockerfile_ubuntugis_unstable
+
+```{} 
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		software-properties-common \
+		vim \
+		wget \
+		ca-certificates \
+  && add-apt-repository --enable-source --yes "ppa:marutter/rrutter3.5" \
+	&& add-apt-repository --enable-source --yes "ppa:marutter/c2d4u3.5" \ 
+	&& add-apt-repository --enable-source --yes "ppa:ubuntugis/ubuntugis-unstable" 
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+ 	  libudunits2-dev libgdal-dev libgeos-dev libproj-dev # liblwgeom-dev
+# install the r-spatial stack linking to new OSGeo pkgs
+RUN R -e 'install.packages(c("sf", "lwgeom", "rgdal", "sp", "stars"))'
 ```
 
 
@@ -97,13 +166,11 @@ cd quarto-cli
 - [X] INBOmd << checklist
 - [X] INBOtheme
 - [X] INLA <- fmesher
-- [ ] inlatools
+- [X] inlatools
 - [X] n2kanalysis << n2khelper multimput < INLA < fmesher
 
 
-- [ ] all in one
-  + tidyverse
-  + bookdown
+- [X] all in one
 
 (publish to docker hub?)
 
@@ -115,8 +182,9 @@ cd quarto-cli
 - enter the terminal and run R
 
 ``` sh
-docker run -it --entrypoint /bin/bash <image>
-R --vanilla --silent -q -e 'library("<image>")'
+docker run --name <container-name> -it <image> bash
+# e.g. # docker run --name bash-quicktest -it docker.io/rocker/r-base bash
+R --vanilla --silent -q -e 'library("<package>")'
 ```
 
 
