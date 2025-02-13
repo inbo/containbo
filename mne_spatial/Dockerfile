@@ -86,7 +86,7 @@ RUN echo "Geospatial packages..." \
 
 # include other repositories via .Rprofile
 COPY ./.Rprofile /root/
-ENV R_PROFILE_USER /root/.Rprofile
+ENV R_PROFILE_USER=/root/.Rprofile
 RUN R -q -e 'getOption("repos")'
 
 
