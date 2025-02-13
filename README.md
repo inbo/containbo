@@ -102,6 +102,8 @@ However, some situations (e.g. packages linking against volatile system dependen
 
 ## Bringing R To You: `r2u`
 
+There is the option to install R packages via system binaries in Ubuntu via `r2u` ([reference](https://github.com/eddelbuettel/r2u)).
+
 For `r2u`, there is a rocker image which you can use as a base for your custom containers.
 
 - <https://github.com/rocker-org/r2u>
