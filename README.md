@@ -296,14 +296,15 @@ docker image history <image_name>
 ```
 
 
-To clean up, remove images and instances with the following commands.
+To ultimately clean up, remove all images and instances with the following commands.
 
 ```{sh}
-# sensible pruning
+# sensible(?) pruning
 docker system prune
+docker builder prune
 
 # radical cleanup
-docker rmi $(podman images -q)
+docker rmi $(docker images -q)
 ```
 
 
