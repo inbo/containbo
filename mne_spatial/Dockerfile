@@ -1,5 +1,4 @@
 FROM docker.io/rocker/rstudio
-# (building upon the rocker/rstudio image)
 
 # meta information
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -10,9 +9,14 @@ LABEL org.opencontainers.image.title="MNE Spatial Analyses and Simulations"
 LABEL org.opencontainers.image.description="A rather inclusive image for resource-intense computer simulation of the INBO project Monitoring Programme for the Natural Environment (MNE)."
 LABEL org.opencontainers.image.base.name="rocker/rstudio"
 
+
 # provide a basic RStudio config to the container root user (when using podman)
 RUN mkdir /root/.config \
  && cp -R /home/rstudio/.config/rstudio /root/.config/
+
+# provide a `/data` folder to store analysis outcomes
+RUN mkdir /data \
+ && chmod 777 /data
 
 
 # update system packages
