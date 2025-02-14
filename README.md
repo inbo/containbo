@@ -155,6 +155,106 @@ Further reading:
 - <https://solutions.posit.co/envs-pkgs/environments>
 
 
+## RStudio settings
+
+Nothing more convenient than a personalized workspace!
+Problem is that changes on the container **are not persistent**, unless you mount volumes from the host system.
+Because the container OS is usually linux, there are simple ways to bring your personal settings along; only they are a bit hard to grasp at first encounter.
+The following paragraph is a superficial dive into the linux file system organization.
+
+
+To find your rstudio settings files on the container, enter the container shell and `find` them:
+
+```{sh}
+docker run -it docker.io/rocker/rstudio bash
+find / -iname "rstudio-prefs.json" 2>/dev/null
+```
+
+
+First observation: 
+When you `docker run` the container, change settings, they are reverted upon re-start of the container ([non-persistence](https://docs.docker.com/get-started/docker-concepts/running-containers/persisting-container-data)).
+
+Bad luck.
+
+
+To circumvent this temporarily, you can mount a local folder from the host to the container.
+That is perfectly feasible: store your settings locally (or just provide a place where they get stored), and they get changed from within the container.
+
+```{sh}
+docker run -it -p 8787:8787 -v /full/path/to/rstudio_config_subfolder:/home/rstudio/.config/rstudio docker.io/rocker/rstudio
+```
+
+
+Devil lies in the detail: 
+
+- Obviously, exchange `docker.io/rocker/rstudio` for the image you built.
+- The above works for a Docker build of `rocker/rstudio`: the default RStudio server user is `rstudio`, so its "home folder" is `/home/rstudio`.
+- Within it resides a `.config`, it contains config for RStudio, so the full path to your rstudio configs on the docker is `/home/rstudio/.config/rstudio`.
+- There is also a `.config/R` subfolder, which might be filled in situations I did not test or anticipate.
+- The path within the container will be overwritten.
+- You could mount the entire `.config`, or even the entire `~` (Linux shorthand for "home folder", e.g. `/home/<username>`), but caution is warranted: if the image maintainer stored something inside there, it will be overwritten. Broken or lost configs are no good; be specific and precise with what you mount (although there is little pain in trying and breaking things locally). 
+- I also found that `-v` requires full path to the host machine, and tend to store config folders with the Dockerfiles.
+
+
+I am using `podman`, where the RStudio server login user `root` (:facepalm:) who for some reason does not have RStudio settings by default (:doublefacepalm:) is not negotiable.
+The home folder of the root user is `/root`, so the command changes to
+
+```{sh}
+podman run -it -p 8787:8787 -v /full/path/to/rstudio_config_subfolder:/root/.config/rstudio <imagename>
+```
+
+*There is effectively no other way than mounting your path at runtime.*
+You might think that Dockerfile `VOLUME` could help; turns out it does not (see below).
+
+
+If you are fine with a one-time shot of bringing your local/personal/predefined configs to the container, you might instead `COPY` or `ADD` them in.
+For example, because most assets in the `~/.config` folder are text files, it makes sense to maintain this important, personal folder in a git repository (which could be called upon in the Dockerfile). 
+One step further, [GNU `stow`](https://www.gnu.org/software/stow) is an excellent tool to manage only the relevant subset of your ".dotfiles", as the geeks call them (e.g. [this instruction video](https://systemcrafters.net/managing-your-dotfiles/using-gnu-stow)).
+
+
+You might find all this information intimidating. 
+And certainly it is, for people unfamiliar with Linux.
+But rest assured: by applying and understanding these highly logical concepts, you grow, you learn, you can get creative ;)
+
+
+## understanding VOLUMEs
+
+For portability, you might want to use [Dockerfile volumes](https://docs.docker.com/reference/dockerfile/#volume).
+Trouble is: **They are NOT REALLY used for portability** as you would naïvely understand it; they are for *persistence* of files from the container which would otherwise be lost.
+In other words, they offer a one-way solution to bring and keep container files from container to the host at runtime.
+Think, for example, of log files or user input on a little web server container, which you would want to keep even after the container is restarted or shut down.
+Repeat: this is about `VOLUME` in a Dockerfile; this is not about `docker run -v [...]`.
+[More references here.](https://stackoverflow.com/a/49173474)
+
+Here is what I tested.
+With Docker, try:
+
+```{}
+VOLUME /home/rstudio/.config
+```
+
+Or with Podman, where you would also want to copy the `.config` of the `rstudio` user, you would instead want to:
+
+```{}
+RUN mkdir /root/.config \
+ && cp -R /home/rstudio/.config/rstudio /root/.config/
+VOLUME /root/.config
+```
+
+
+This by itself does **not** make the .config volume persistent over instances/sessions; you will still need to mount another folder from the host.
+The following commands might be useful:
+
+```{sh}
+docker volume ls
+docker volume export [...]
+```
+
+I found more info on this [here](https://stackoverflow.com/a/38299025).
+
+Because of the volatile nature of a docker container, mounting of a host path has to be done with the `docker run`.
+
+
 ## private repos
 
 If you require private repo's within the container, copy them in as follows:
@@ -271,22 +371,34 @@ Two options:
 ## Hard Drive Space
 
 Experimenting with these container recipes might quickly fill your drive.
+From the host machine, `docker images` will give you a table with sizes.
+You can further investigate within the container:
 
 ```{sh}
 df -h # will show the remaining disk space
 du -sh /tmp/* # "disk usage", will show size of subfolders in the specified path
 ```
 
-I also noted that removing files within the container will keep the virtual drive space large,
-which is why it might make sense to clean up on every build step. 
-For example:
+
+I also noted that docker will keep the virtual drive space large, even after removing files within the container.
+The container volume seems to refuse to shrink!
+
+This justifies some extra care with the increase of volume size during the build process.
+*Every command in the Dockerfile creates a new "layer"*, which enables docker caching of intermediate stages.
+If those layers increase virtual disk volume, there is no turing back.
+Which is why it might make sense to clean up at the end of every build step. 
+
+The following commands can help you:
 
 ```{}
 RUN R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)'
-RUN apt-get autoremove -y
-RUN apt-get clean -y
+RUN apt-get autoremove -y \
+ && apt-get clean -y
 RUN rm -rf /tmp/*
 ```
+
+Know that commands can be chained in Linux with the **double ampersand operator `&&`**, which means: "wait for one command to finish, then execute the next". 
+Compare to a single ampersand `&`: this can be used to execute commands in parallel (not generally a good idea for build instructions).
 
 
 When optimizing a build stack, you can use `docker image history` to show disk usage of the individual steps ([via](https://bell-sw.com/blog/how-to-reduce-the-size-of-docker-container-images)).
@@ -296,12 +408,14 @@ docker image history <image_name>
 ```
 
 
-To ultimately clean up, remove all images and instances with the following commands.
+This behavior might be annoying enough so that you decide to quit docker forever.
+In that case, you can remove all images and instances with the following commands.
 
 ```{sh}
 # sensible(?) pruning
 docker system prune
 docker builder prune
+docker volume prune
 
 # radical cleanup
 docker rmi $(docker images -q)

@@ -3,11 +3,17 @@ FROM docker.io/rocker/rstudio
 
 LABEL version="1.0" maintainer="Falk Mielke <falk.mielke@inbo.be>"
 
+
+# provide a basic RStudio config to the container root user (when using podman)
+RUN mkdir /root/.config \
+ && cp -R /home/rstudio/.config/rstudio /root/.config/
+
+
 # update system packages
 # and add ubuntugis repository
 # for latest versions of programs in the spatial stack
 # and basic system packages for `pak` to proceed
-RUN echo "System repositories and packages" \
+RUN echo "System repositories and packages..." \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -20,7 +26,8 @@ RUN echo "System repositories and packages" \
     vim \
     wget \
   && add-apt-repository --enable-source --yes "ppa:ubuntugis/ubuntugis-unstable" \
-  && apt-get autoremove -y && apt-get clean -y
+  && apt-get autoremove -y && apt-get clean -y \
+  && echo "done."
 
 
 # install geospatial packages
@@ -151,7 +158,7 @@ RUN apt-get clean -y
 RUN rm -rf /tmp/*
 
 
-### open quetions:
+### solved quetions:
 # - gaan we https://geocompr.r-universe.dev nodig hebben? -> waarschijnlijk neen.
 # && R -q -e 'pak::pkg_install("mapview", dependencies = TRUE)' \
 
