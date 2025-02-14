@@ -19,7 +19,8 @@ RUN echo "System repositories and packages" \
     software-properties-common \
     vim \
     wget \
-  && add-apt-repository --enable-source --yes "ppa:ubuntugis/ubuntugis-unstable"
+  && add-apt-repository --enable-source --yes "ppa:ubuntugis/ubuntugis-unstable" \
+  && apt-get autoremove -y && apt-get clean -y
 
 
 # install geospatial packages
@@ -29,59 +30,8 @@ RUN echo "Geospatial packages..." \
     libgdal-dev \
     libgeos-dev \
     libproj-dev \
+  && apt-get autoremove -y && apt-get clean -y \
   && echo "done."
-
-
-# # more system packages # -> to be handled by pak
-# RUN apt-get update \
-#   && apt-get install -y --no-install-recommends \
-# 	libodbc2 \
-#     apt-show-versions \
-#     cmake \
-#     jags \
-#     lbzip2 \
-#     libabsl-dev \
-#     libcurl4-openssl-dev \
-#     libfftw3-dev \
-#     libfontconfig1-dev \
-#     libfreetype6-dev \
-#     libfribidi-dev \
-#     libgdal-dev \
-#     libgeos-dev \
-#     libgit2-dev \
-#     libgl1-mesa-dev \
-#     libglu1-mesa-dev \
-#     libgsl0-dev \
-#     libharfbuzz-dev \
-#     libhdf4-alt-dev \
-#     libhdf5-dev \
-#     libjpeg-dev \
-#     libjq-dev \
-#     libmagick++-dev \
-#     libnetcdf-dev \
-#     libpng-dev \
-#     libpoppler-cpp-dev \
-#     libpq-dev \
-#     libproj-dev \
-#     libprotobuf-dev \
-#     librdf0-dev \
-#     libsodium-dev \
-#     libsqlite3-dev \
-#     libssl-dev \
-#     libtiff5-dev \
-#     libudunits2-dev \
-#     libv8-dev \
-#     libxml2-dev \
-#     netcdf-bin \
-#     postgis \
-#     protobuf-compiler \
-#     python3 \
-#     python3-pip \
-#     sqlite3 \
-#     tk-dev \
-#     unixodbc-dev
-# # liblwgeom-dev \
-
 
 
 # include other repositories via .Rprofile
@@ -135,6 +85,8 @@ RUN echo "installing R packages from various standard sources..." \
  && R -q -e 'pak::pkg_install("vegan", dependencies = TRUE)' \
  && R -q -e 'pak::pkg_install("paleolimbot/rbbt", dependencies = TRUE)' \
  && R -q -e 'pak::pkg_install("cmdstanr", dependencies = TRUE)' \
+ && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
+ && rm -rf /tmp/* \
  && echo "done."
 
 
@@ -143,6 +95,8 @@ RUN echo "installing additional geospatial packages for R..." \
  && R -q -e 'remotes::install_github("r-spatial/sf")' \
  && R -q -e 'remotes::install_github("rspatial/terra")' \
  && R -q -e 'pak::pkg_install(c("lwgeom", "sp", "stars"), dependencies = TRUE)' \
+ && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
+ && rm -rf /tmp/* \
  && echo "done."
 
 
@@ -151,6 +105,7 @@ RUN echo "installing INLA..." \
  && R -q -e 'BiocManager::install(c("graph", "Rgraphviz"), dependencies = TRUE)' \
  && R -q -e 'install.packages("fmesher", dependencies = TRUE)' \
  && R -q -e 'install.packages("INLA", dependencies = TRUE)' \
+ && rm -rf /tmp/* \
  && echo "done."
 
 # , repos = c("https://inlabru-org.r-universe.dev", "https://cloud.r-project.org")
@@ -168,6 +123,8 @@ RUN echo "installing INBO packages for R..." \
  && R -q -e 'pak::pkg_install("inbo/n2khab", dependencies = TRUE)' \
  && R -q -e 'pak::pkg_install("inbo/n2khabmon", dependencies = TRUE)' \
  && R -q -e 'pak::pkg_install("inbo/watina", dependencies = TRUE)' \
+ && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
+ && rm -rf /tmp/* \
  && echo "done."
 
 
@@ -187,8 +144,15 @@ RUN quarto install tinytex --update-path
 RUN pip3 install jupyter --break-system-packages
 
 
+### Cleanup Again
+RUN R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)'
+RUN apt-get autoremove -y
+RUN apt-get clean -y
+RUN rm -rf /tmp/*
+
+
 ### open quetions:
-# - gaan we https://geocompr.r-universe.dev nodig hebben?
+# - gaan we https://geocompr.r-universe.dev nodig hebben? -> waarschijnlijk neen.
 # && R -q -e 'pak::pkg_install("mapview", dependencies = TRUE)' \
 
 # geospatial

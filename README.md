@@ -273,7 +273,26 @@ Two options:
 Experimenting with these container recipes might quickly fill your drive.
 
 ```{sh}
-df -h
+df -h # will show the remaining disk space
+du -sh /tmp/* # "disk usage", will show size of subfolders in the specified path
+```
+
+I also noted that removing files within the container will keep the virtual drive space large,
+which is why it might make sense to clean up on every build step. 
+For example:
+
+```{}
+RUN R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)'
+RUN apt-get autoremove -y
+RUN apt-get clean -y
+RUN rm -rf /tmp/*
+```
+
+
+When optimizing a build stack, you can use `docker image history` to show disk usage of the individual steps ([via](https://bell-sw.com/blog/how-to-reduce-the-size-of-docker-container-images)).
+
+```{sh}
+docker image history <image_name>
 ```
 
 
