@@ -421,6 +421,15 @@ docker volume prune
 docker rmi $(docker images -q)
 ```
 
+## Users and Environment Variables
+
+Some rather advanced tricks on linux user handling and the use of environment variables are available in the `./emacs` Dockerfile.
+In the example case, you can choose a username in the container via a `--build-arg`;
+the user is created during build and chosen for startup via `CMD`.
+It is also possible to run a custom startup script as an entrypoint.
+
+The image itself is a minimal arch linux setup with emacs.
+
 
 # List of INBO Packages
 

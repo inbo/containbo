@@ -18,7 +18,6 @@ RUN mkdir /root/.config \
 RUN mkdir /data \
  && chmod 777 /data
 
-
 # update system packages
 # and add ubuntugis repository
 # for latest versions of programs in the spatial stack
