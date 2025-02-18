@@ -440,6 +440,29 @@ It is also possible to run a custom startup script as an entrypoint.
 The image itself is a minimal arch linux setup with emacs.
 
 
+## Multiarch Cross Compiling
+
+Some of the servers we use work on `arm64` architecture.
+To test locally whether a Dockerfile would work, it is recommended to cross build to `--platform=linux/arm64`.
+
+On a linux host machine, this is enabled by [`qemu`](https://wiki.archlinux.org/title/QEMU) and facilitated by [`buildah`](https://wiki.archlinux.org/title/Buildah)
+
+
+Install `qemu` (including other relevant qemu-packages) and `buildah`.
+
+```
+pacman -Sy qemu-base qemu-system-aarch64 qemu-user-static qemu-user-static-binfmt buildah
+```
+
+Then, build using `buildah`:
+
+```
+buildah bud --platform=linux/arm64 .
+```
+
+Note: cross-platform building will take much longer than the usual procedure!
+
+
 # List of INBO Packages
 
 - [X] INBOmd << checklist
