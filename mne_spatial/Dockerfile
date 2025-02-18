@@ -14,9 +14,15 @@ LABEL org.opencontainers.image.base.name="rocker/rstudio"
 RUN mkdir /root/.config \
  && cp -R /home/rstudio/.config/rstudio /root/.config/
 
+
 # provide a `/data` folder to store analysis outcomes
-RUN mkdir /data \
- && chmod 777 /data
+VOLUME ["/data"]
+# this can  be used for mounting at runtime with # run [...] -v /path/to/folder:/data [...]
+# For podman/linux non-root container users, you need to fix a UID on the created user (usually 1000)
+# And then run on the host system:
+#    podman unshare chown 4200:4200 -R /path/to/share
+# cf. https://www.tutorialworks.com/podman-rootless-volumes
+
 
 # update system packages
 # and add ubuntugis repository

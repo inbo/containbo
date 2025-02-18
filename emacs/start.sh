@@ -10,11 +10,7 @@ SHELL=${SHELL:-/bin/fish}
 echo $USERNAME
 
 # Create User
-USERADD_COMMAND="useradd -m -s $SHELL"
-
-if [[ -z $UID ]]; then
-  USERADD_COMMAND="$USERADD_COMMAND -u $UID"
-fi
+USERADD_COMMAND="useradd -m -s $SHELL -u 4200"
 
 eval "$USERADD_COMMAND $USERNAME"
 
