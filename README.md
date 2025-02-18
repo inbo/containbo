@@ -252,7 +252,16 @@ docker volume export [...]
 
 I found more info on this [here](https://stackoverflow.com/a/38299025).
 
-Because of the volatile nature of a docker container, mounting of a host path has to be done with the `docker run`.
+Because of the volatile nature of a docker container, mounting of a host path has to be done with the `docker run -v /host/path:/container/path`; make sure to spell out both paths.
+
+When using Podman, there is the extra complication of user IDs (cf. ["Using volumes with rootless podman, explained" by Tom Donohue](https://www.tutorialworks.com/podman-rootless-volumes)).
+Mounting a folder with `rw` permissions for non-root within the container requires knowledge of the UID within the container (linux: `id` command), and one extra command on the host:
+
+```{sh}
+podman unshare chown UID:GID -R /host/path/to/share
+```
+
+For details, see the `./emacs` recipe.
 
 
 ## private repos

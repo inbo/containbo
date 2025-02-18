@@ -1,14 +1,16 @@
 
 FROM docker.io/archlinux
 # A container to run doom emacs org mode on any system.
-# With focus on `podman`.
+# With `podman`-aware implementation details.
+
 
 # update repo's and install requirements
 RUN pacman --noconfirm -Syu \
  && pacman --noconfirm -Sy vim emacs ripgrep fd git fish zsh ttf-mononoki-nerd \
  && pacman --noconfirm -Scc
 
-# setting user variables
+
+# setting user variables, which are nevertheless overwritten by `--build-arg`s
 # https://www.docker.com/blog/docker-best-practices-using-arg-and-env-in-your-dockerfiles/
 # https://vsupalov.com/docker-build-pass-environment-variables/
 # you must then build with `--build-arg`s, e.g.
@@ -16,6 +18,7 @@ RUN pacman --noconfirm -Syu \
 ARG USERNAME="inbo"
 ENV USERNAME=$USERNAME
 ENV SHELL="/bin/fish"
+
 
 # a start script go get the user set up
 # copied and modified from:
@@ -32,13 +35,15 @@ RUN USERNAME=$USERNAME sh /tmp/start.sh
 #   LOCALE_GEN - What to put in /etc/locale.gen
 #   LOCALE_CONF - What to put in /etc/locale.conf
 
+
 # prepare sharing directory:
 VOLUME ["/data"]
 # this can  be used for mounting at runtime with # run [...] -v /path/to/folder:/data [...]
 # For podman/linux, you need to fix a UID on the created user (see start.sh)
 # And then run on the host system:
-#    podman unshare chown 4200:4200 -R /path/to/share
+#    podman unshare chown 4200:4200 -R /host/path/to/share
 # cf. https://www.tutorialworks.com/podman-rootless-volumes
+# via https://stackoverflow.com/a/76497033
 
 
 # # get entrypoint
@@ -48,7 +53,7 @@ VOLUME ["/data"]
 # COPY entrypoint.sh /root/entrypoint.sh
 # RUN chmod +x /root/entrypoint.sh
 # ENTRYPOINT "/root/entrypoint.sh" # requires permissions for $USERNAME
-# # this did not work well with user preparation and switching, due to file permission issues
+# # this did not work well with user preparation and switching, due to file permission issues; might work with `podman unshare`
 
 
 # Customization: copy in your (doom) emacs configs
@@ -60,16 +65,13 @@ COPY .doom.d "/home/$USERNAME/.doom.d"
 # this will also apply to the CMD below, i.e. you will log in as the $USERNAME
 USER "$USERNAME"
 
-# https://www.tutorialworks.com/podman-rootless-volumes
-# via https://stackoverflow.com/a/76497033
-# podman unshare chown 4200:4200 -R share
-
-
 
 # install doom emacs for that user
 RUN git clone --depth 1 --single-branch https://github.com/doomemacs/doomemacs ~/.emacs.d \
- && cd ~/.emacs.d/bin && ./doom install --env --config --install --fonts --force
+ && cd ~/.emacs.d/bin && ./doom install --env --config --install --fonts --force \
+ && ./doom upgrade -! && ./doom sync
 
-# USER root
+
+# set an entry point as USER with the last CMD
 # CMD echo "df $USERNAME" && su - $USERNAME -c emacs # for testing
 CMD cd ~ && emacs
