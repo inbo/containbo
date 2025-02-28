@@ -3,6 +3,15 @@ FROM docker.io/archlinux
 # A container to run doom emacs org mode on any system.
 # With `podman`-aware implementation details.
 
+# meta information
+# https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.authors="Falk Mielke <falk.mielke@inbo.be>"
+LABEL org.opencontainers.image.created="20250228"
+LABEL org.opencontainers.image.url="https://github.com/inbo/containbo"
+LABEL org.opencontainers.image.title="Testing an emacs container"
+LABEL org.opencontainers.image.description="an arch linux container with doom emacs installed; just in case I need to work on windows :/"
+LABEL org.opencontainers.image.base.name="_/archlinux:latest"
+
 
 # update repo's and install requirements
 RUN pacman --noconfirm -Syu \
