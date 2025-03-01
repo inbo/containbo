@@ -30,6 +30,7 @@ VOLUME ["/data"]
 # and basic system packages for `pak` to proceed
 RUN echo "System repositories and packages..." \
   && apt-get update \
+  && apt-get full-upgrade -y --no-install-recommends \
   && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
@@ -40,18 +41,6 @@ RUN echo "System repositories and packages..." \
     software-properties-common \
     vim \
     wget \
-  && add-apt-repository --enable-source --yes "ppa:ubuntugis/ubuntugis-unstable" \
-  && apt-get autoremove -y && apt-get clean -y \
-  && echo "done."
-
-
-# install geospatial packages
-RUN echo "Geospatial packages..." \
-  && apt-get update \
-  && apt-get full-upgrade -y --no-install-recommends \
-    libgdal-dev \
-    libgeos-dev \
-    libproj-dev \
   && apt-get autoremove -y && apt-get clean -y \
   && echo "done."
 
@@ -67,67 +56,81 @@ RUN R -q -e 'update.packages(ask=FALSE)'
 
 RUN echo "Installing BiocManager and pak for furhter package management..." \
   && R -q -e 'install.packages("BiocManager", dependencies = TRUE)' \
-  && R -q -e 'install.packages("pak", dependencies = TRUE)' \
   && echo "done."
+# && R -q -e 'install.packages("pak", dependencies = TRUE)' \
 
 
 # R packages, CRAN
-RUN echo "installing R packages from various standard sources..." \
- && R -q -e 'pak::pkg_install("arrow", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("BiocManager", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("bookdown", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("brms", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("conquer", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("devtools", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("GGally", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("git2rdata", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("janitor", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("knitr", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("link2GI", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("mitools", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("pROC", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("patchwork", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("permute", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("pkgdown", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("remotes", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("renv", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("reshape", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("reticulate", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("rgrass", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("rmarkdown", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("roxygen2", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("rprojroot", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("rstan", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("snakecase", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("survey", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("terra", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("tidyverse", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("tmvnsim", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("usethis", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("vegan", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("paleolimbot/rbbt", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("cmdstanr", dependencies = TRUE)' \
- && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
- && rm -rf /tmp/* \
+RUN echo "installing R packages from various standard sources..." 
+RUN R -q -e 'install.packages("arrow", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("BiocManager", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("bookdown", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("brms", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("conquer", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("devtools", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("GGally", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("git2rdata", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("janitor", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("knitr", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("link2GI", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("mitools", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("pROC", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("patchwork", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("permute", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("pkgdown", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("remotes", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("renv", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("reshape", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("reticulate", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("rgrass", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("rmarkdown", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("roxygen2", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("rprojroot", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("rstan", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("snakecase", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("survey", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("terra", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("tidyverse", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("tmvnsim", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("usethis", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("vegan", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("paleolimbot/rbbt", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("cmdstanr", dependencies = TRUE)' 
+RUN rm -rf /tmp/* \
  && echo "done."
+# && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
+
+RUN echo "System repositories and packages..." \
+  && add-apt-repository --enable-source --yes "ppa:ubuntugis/ubuntugis-unstable" \
+  && apt-get autoremove -y && apt-get clean -y \
+  && echo "done."
+
+# install geospatial packages
+RUN echo "Geospatial packages..." \
+  && apt-get update \
+    libgdal-dev \
+    libgeos-dev \
+    libproj-dev \
+  && apt-get autoremove -y && apt-get clean -y \
+  && echo "done."
 
 
 # R geospatial packages, linking to latest system packages (geos, gdal, proj)
 RUN echo "installing additional geospatial packages for R..." \
  && R -q -e 'remotes::install_github("r-spatial/sf")' \
  && R -q -e 'remotes::install_github("rspatial/terra")' \
- && R -q -e 'pak::pkg_install(c("lwgeom", "sp", "stars"), dependencies = TRUE)' \
- && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
+ && R -q -e 'install.packages(c("lwgeom", "sp", "stars"), dependencies = TRUE)' \
  && rm -rf /tmp/* \
  && echo "done."
+#&& R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
 
 
 # INLA
-RUN echo "installing INLA..." \
- && R -q -e 'BiocManager::install(c("graph", "Rgraphviz"), dependencies = TRUE)' \
- && R -q -e 'install.packages("fmesher", dependencies = TRUE)' \
- && R -q -e 'install.packages("INLA", dependencies = TRUE)' \
- && rm -rf /tmp/* \
+RUN echo "installing INLA..." 
+RUN R -q -e 'BiocManager::install(c("graph", "Rgraphviz"), dependencies = TRUE)' 
+RUN R -q -e 'install.packages("fmesher", dependencies = TRUE)' 
+RUN R -q -e 'install.packages("INLA", dependencies = TRUE)' 
+RUN rm -rf /tmp/* \
  && echo "done."
 
 # , repos = c("https://inlabru-org.r-universe.dev", "https://cloud.r-project.org")
@@ -135,19 +138,19 @@ RUN echo "installing INLA..." \
 
 
 # INBO packages
-RUN echo "installing INBO packages for R..." \
- && R -q -e 'pak::pkg_install("inbo/INBOmd", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("inbo/inbodb", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("inbo/inbospatial", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("inbo/inlatools", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("inbo/multimput", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("inbo/n2kanalysis", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("inbo/n2khab", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("inbo/n2khabmon", dependencies = TRUE)' \
- && R -q -e 'pak::pkg_install("inbo/watina", dependencies = TRUE)' \
- && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
- && rm -rf /tmp/* \
+RUN echo "installing INBO packages for R..." 
+RUN R -q -e 'remotes::install_github("inbo/INBOmd", dependencies = TRUE)' 
+RUN R -q -e 'remotes::install_github("inbo/inbodb", dependencies = TRUE)' 
+RUN R -q -e 'remotes::install_github("inbo/inbospatial", dependencies = TRUE)' 
+RUN R -q -e 'remotes::install_github("inbo/inlatools", dependencies = TRUE)' 
+RUN R -q -e 'remotes::install_github("inbo/multimput", dependencies = TRUE)' 
+RUN R -q -e 'remotes::install_github("inbo/n2kanalysis", dependencies = TRUE)' 
+RUN R -q -e 'remotes::install_github("inbo/n2khab", dependencies = TRUE)' 
+RUN R -q -e 'remotes::install_github("inbo/n2khabmon", dependencies = TRUE)' 
+RUN R -q -e 'remotes::install_github("inbo/watina", dependencies = TRUE)' 
+RUN rm -rf /tmp/* \
  && echo "done."
+# && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
 
 
 # "rgdal" is end of life # https://r-spatial.org/r/2022/04/12/evolution.html#packages-depending-on-rgeos-and-rgdal

@@ -178,18 +178,26 @@ RUN echo "installing INLA..." \
 
 
 # INBO packages
-RUN echo "installing INBO packages for R..." \
- && R -q -e 'remotes::install_github("inbo/INBOmd", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/inbodb", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/inbospatial", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/inlatools", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/multimput", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/n2kanalysis", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/n2khab", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/n2khabmon", dependencies = TRUE)' \
- && R -q -e 'remotes::install_github("inbo/watina", dependencies = TRUE)' \
- && rm -rf /tmp/* \
- && echo "done."
+RUN echo "installing INBO packages for R..."
+RUN R -q -e 'remotes::install_github("inbo/INBOmd", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN R -q -e 'remotes::install_github("inbo/inbodb", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN R -q -e 'remotes::install_github("inbo/inbospatial", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN R -q -e 'remotes::install_github("inbo/inlatools", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN R -q -e 'remotes::install_github("inbo/multimput", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN R -q -e 'remotes::install_github("inbo/n2kanalysis", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN R -q -e 'remotes::install_github("inbo/n2khab", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN R -q -e 'remotes::install_github("inbo/n2khabmon", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN R -q -e 'remotes::install_github("inbo/watina", dependencies = TRUE)' \
+&& rm -rf /tmp/*
+RUN echo "done."
 # && R -q -e 'pak::pak_cleanup(package_cache = TRUE, metadata_cache = TRUE, pak_lib = TRUE, force = TRUE)' \
 
 
