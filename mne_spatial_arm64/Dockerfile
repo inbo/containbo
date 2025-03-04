@@ -24,10 +24,7 @@ VOLUME ["/data"]
 # cf. https://www.tutorialworks.com/podman-rootless-volumes
 
 
-# update system packages
-# and add ubuntugis repository
-# for latest versions of programs in the spatial stack
-# and basic system packages for `pak` to proceed
+# update/install system packages
 RUN echo "System repositories and packages..." \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
